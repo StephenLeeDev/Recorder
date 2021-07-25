@@ -1,6 +1,7 @@
 package com.example.recorderapp
 
 import android.Manifest
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 
@@ -24,6 +25,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        val audioRecordPermissionGranted = requestCode == REQUEST_RECORD_AUDIO_PERMISSION &&
+                grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED
+
+        if (!audioRecordPermissionGranted) {
+            finish()
+        }
     }
 
     private fun initViews() {
