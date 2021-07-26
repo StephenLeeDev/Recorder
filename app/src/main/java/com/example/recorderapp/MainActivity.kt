@@ -2,6 +2,7 @@ package com.example.recorderapp
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.media.MediaRecorder
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 
@@ -11,7 +12,16 @@ class MainActivity : AppCompatActivity() {
         findViewById(R.id.recordButton)
     }
 
-    private val requiredPermissions = arrayOf(Manifest.permission.RECORD_AUDIO)
+    private val requiredPermissions = arrayOf(
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+    )
+
+    private val recordingFilePath: String by lazy {
+        "${externalCacheDir?.absolutePath}/recording.3gp"
+    }
+
+    private var recorder: MediaRecorder? = null
 
     private var state = State.BEFORE_RECORDING
 
@@ -40,6 +50,17 @@ class MainActivity : AppCompatActivity() {
 
     private fun requestAudioPermission() {
         requestPermissions(requiredPermissions, REQUEST_RECORD_AUDIO_PERMISSION)
+    }
+
+    private fun startRecording() {
+        recorder = MediaRecorder().apply {
+            setAudioSource(MediaRecorder.AudioSource.MIC)
+            setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
+            setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+            setOutputFile(recordingFilePath)
+            prepare()
+        }
+        recorder?.start()
     }
 
     companion object {
