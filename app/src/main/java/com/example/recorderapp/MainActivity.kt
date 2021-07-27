@@ -2,6 +2,7 @@ package com.example.recorderapp
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.media.MediaPlayer
 import android.media.MediaRecorder
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -22,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private var recorder: MediaRecorder? = null
+    private var player: MediaPlayer? = null
 
     private var state = State.BEFORE_RECORDING
 
@@ -69,6 +71,14 @@ class MainActivity : AppCompatActivity() {
             release()
         }
         recorder = null
+    }
+
+    private fun startPlaying() {
+        player = MediaPlayer().apply {
+            setDataSource(recordingFilePath)
+            prepare()
+        }
+        player?.start()
     }
 
     companion object {
