@@ -63,6 +63,14 @@ class MainActivity : AppCompatActivity() {
         recorder?.start()
     }
 
+    private fun stopRecording() {
+        recorder?.run {
+            stop()
+            release()
+        }
+        recorder = null
+    }
+
     companion object {
         private const val REQUEST_RECORD_AUDIO_PERMISSION = 201
     }
