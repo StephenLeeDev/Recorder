@@ -81,6 +81,11 @@ class MainActivity : AppCompatActivity() {
         player?.start()
     }
 
+    private fun stopPlaying() {
+        player?.release()
+        player = null
+    }
+
     companion object {
         private const val REQUEST_RECORD_AUDIO_PERMISSION = 201
     }
