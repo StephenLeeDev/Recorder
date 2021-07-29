@@ -26,6 +26,10 @@ class MainActivity : AppCompatActivity() {
     private var player: MediaPlayer? = null
 
     private var state = State.BEFORE_RECORDING
+        set(value) {
+            field = value
+            recordButton.updateIconWithState(value)
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +67,7 @@ class MainActivity : AppCompatActivity() {
             prepare()
         }
         recorder?.start()
+        state = State.ON_RECORDING
     }
 
     private fun stopRecording() {
@@ -71,6 +76,7 @@ class MainActivity : AppCompatActivity() {
             release()
         }
         recorder = null
+        state = State.AFTER_RECORDING
     }
 
     private fun startPlaying() {
@@ -79,11 +85,13 @@ class MainActivity : AppCompatActivity() {
             prepare()
         }
         player?.start()
+        state = State.ON_PLAYING
     }
 
     private fun stopPlaying() {
         player?.release()
         player = null
+        state = State.AFTER_RECORDING
     }
 
     companion object {
