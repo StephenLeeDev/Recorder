@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity() {
 
         requestAudioPermission()
         initViews()
+        bindViews()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -92,6 +93,25 @@ class MainActivity : AppCompatActivity() {
         player?.release()
         player = null
         state = State.AFTER_RECORDING
+    }
+
+    private fun bindViews() {
+        recordButton.setOnClickListener {
+            when (state) {
+                State.BEFORE_RECORDING -> {
+                    startRecording()
+                }
+                State.ON_RECORDING -> {
+                    stopRecording()
+                }
+                State.AFTER_RECORDING -> {
+                    startPlaying()
+                }
+                State.ON_PLAYING -> {
+                    stopPlaying()
+                }
+            }
+        }
     }
 
     companion object {
