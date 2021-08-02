@@ -29,12 +29,19 @@ class SoundVisualizerView(context: Context, attrs: AttributeSet? = null) : View(
         canvas ?: return
 
         val centerY = drawingHeight / 2f
-        val offsetX = drawingWidth
+        var offsetX = drawingWidth.toFloat()
+
+        drawingAmplitudes.forEach { amplitude ->
+            val lineLength = amplitude / MAX_AMPLITUDE * drawingHeight * 0.8F
+
+            offsetX -= LINE_SPACE
+            if (offsetX < 0) return@forEach
+        }
     }
 
     companion object {
         private const val LINE_WIDTH = 10F
         private const val LINE_SPACE = 15F
-        private const val MAX_AMPLITUDE = Short.MAX_VALUE
+        private const val MAX_AMPLITUDE = Short.MAX_VALUE.toFloat()
     }
 }
