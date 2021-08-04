@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
+import kotlin.random.Random
 
 class SoundVisualizerView(context: Context, attrs: AttributeSet? = null) : View(context, attrs) {
 
@@ -15,7 +16,8 @@ class SoundVisualizerView(context: Context, attrs: AttributeSet? = null) : View(
     }
     var drawingWidth: Int = 0
     var drawingHeight: Int = 0
-    var drawingAmplitudes: List<Int> = emptyList()
+//    var drawingAmplitudes: List<Int> = emptyList()
+    var drawingAmplitudes: List<Int> = (0..10).map { Random.nextInt(Short.MAX_VALUE.toInt())}
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
@@ -36,6 +38,14 @@ class SoundVisualizerView(context: Context, attrs: AttributeSet? = null) : View(
 
             offsetX -= LINE_SPACE
             if (offsetX < 0) return@forEach
+
+            canvas.drawLine(
+                    offsetX,
+                    centerY - lineLength / 2F,
+                    offsetX,
+                    centerY + lineLength / 2F,
+                    amplitudePaint
+            )
         }
     }
 
