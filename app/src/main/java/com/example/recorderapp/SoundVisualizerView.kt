@@ -25,6 +25,7 @@ class SoundVisualizerView(context: Context, attrs: AttributeSet? = null) : View(
         override fun run() {
             val currentAmplitude = onRequestCurrentAmplitude?.invoke() ?: 0
             drawingAmplitudes = listOf(currentAmplitude) + drawingAmplitudes
+            invalidate()
 
             handler?.postDelayed(this, ACTION_INTERVAL)
         }
@@ -58,6 +59,14 @@ class SoundVisualizerView(context: Context, attrs: AttributeSet? = null) : View(
                     amplitudePaint
             )
         }
+    }
+
+    fun startVisualizing() {
+        handler?.post(visualizeRepeatAction)
+    }
+
+    fun stopVisualizing() {
+        handler?.removeCallbacks(visualizeRepeatAction)
     }
 
     companion object {
