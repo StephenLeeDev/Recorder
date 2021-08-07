@@ -5,9 +5,11 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
-import kotlin.random.Random
 
-class SoundVisualizerView(context: Context, attrs: AttributeSet? = null) : View(context, attrs) {
+class SoundVisualizerView(
+        context: Context,
+        attrs: AttributeSet? = null
+) : View(context, attrs) {
 
     var onRequestCurrentAmplitude: (() -> Int)? = null
 
@@ -18,13 +20,18 @@ class SoundVisualizerView(context: Context, attrs: AttributeSet? = null) : View(
     }
     private var drawingWidth: Int = 0
     private var drawingHeight: Int = 0
-//    var drawingAmplitudes: List<Int> = emptyList()
-    private var drawingAmplitudes: List<Int> = (0..10).map { Random.nextInt(Short.MAX_VALUE.toInt())}
+    private var drawingAmplitudes: List<Int> = emptyList()
+    private var isReplaying: Boolean = false
+    private var replayingPosition: Int = 0
 
     private val visualizeRepeatAction: Runnable = object : Runnable {
         override fun run() {
-            val currentAmplitude = onRequestCurrentAmplitude?.invoke() ?: 0
-            drawingAmplitudes = listOf(currentAmplitude) + drawingAmplitudes
+            if (!isReplaying) {
+                val currentAmplitude = onRequestCurrentAmplitude?.invoke() ?: 0
+                drawingAmplitudes = listOf(currentAmplitude) + drawingAmplitudes
+            } else {
+                replayingPosition++
+            }
             invalidate()
 
             handler?.postDelayed(this, ACTION_INTERVAL)
@@ -45,28 +52,43 @@ class SoundVisualizerView(context: Context, attrs: AttributeSet? = null) : View(
         val centerY = drawingHeight / 2f
         var offsetX = drawingWidth.toFloat()
 
-        drawingAmplitudes.forEach { amplitude ->
-            val lineLength = amplitude / MAX_AMPLITUDE * drawingHeight * 0.8F
+        drawingAmplitudes
+                .let { amplitudes ->
+                    if (isReplaying) {
+                        amplitudes.takeLast(replayingPosition)
+                    } else {
+                        amplitudes
+                    }
+                }
+                .forEach { amplitude ->
+                    val lineLength = amplitude / MAX_AMPLITUDE * drawingHeight * 0.8F
 
-            offsetX -= LINE_SPACE
-            if (offsetX < 0) return@forEach
+                    offsetX -= LINE_SPACE
+                    if (offsetX < 0) return@forEach
 
-            canvas.drawLine(
-                    offsetX,
-                    centerY - lineLength / 2F,
-                    offsetX,
-                    centerY + lineLength / 2F,
-                    amplitudePaint
-            )
-        }
+                    canvas.drawLine(
+                            offsetX,
+                            centerY - lineLength / 2F,
+                            offsetX,
+                            centerY + lineLength / 2F,
+                            amplitudePaint
+                    )
+                }
     }
 
-    fun startVisualizing() {
+    fun startVisualizing(isReplaying: Boolean) {
+        this.isReplaying = isReplaying
         handler?.post(visualizeRepeatAction)
     }
 
     fun stopVisualizing() {
+        replayingPosition = 0
         handler?.removeCallbacks(visualizeRepeatAction)
+    }
+
+    fun clearVisualization() {
+        drawingAmplitudes = emptyList()
+        invalidate()
     }
 
     companion object {
