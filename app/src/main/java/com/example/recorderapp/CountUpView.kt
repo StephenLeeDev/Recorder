@@ -8,16 +8,18 @@ import androidx.appcompat.widget.AppCompatTextView
 
 class CountUpView(
         context: Context,
-        attr: AttributeSet? = null
-) : AppCompatTextView(context, attr) {
+        attrs: AttributeSet? = null
+) : AppCompatTextView(context, attrs) {
 
     private var startTimeStamp: Long = 0L
 
-    private val countUpAction: Runnable = object: Runnable {
+    private val countUpAction: Runnable = object : Runnable {
         override fun run() {
             val currentTimeStamp = SystemClock.elapsedRealtime()
             val countTimeSeconds = ((currentTimeStamp - startTimeStamp) / 1000L).toInt()
             updateCountTime(countTimeSeconds)
+
+            handler?.postDelayed(this, 1000L)
         }
     }
 
@@ -28,6 +30,10 @@ class CountUpView(
 
     fun stopCountUp() {
         handler?.removeCallbacks(countUpAction)
+    }
+
+    fun clearCountTime() {
+        updateCountTime(0)
     }
 
     @SuppressLint("SetTextI18n")
