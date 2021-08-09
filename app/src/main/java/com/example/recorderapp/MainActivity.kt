@@ -109,6 +109,10 @@ class MainActivity : AppCompatActivity() {
             setDataSource(recordingFilePath)
             prepare()
         }
+        player?.setOnCompletionListener {
+            stopPlaying()
+            state = State.AFTER_RECORDING
+        }
         player?.start()
         soundVisualizerView.startVisualizing(true)
         recordTimeTextView.startCountUp()
@@ -127,6 +131,12 @@ class MainActivity : AppCompatActivity() {
         soundVisualizerView.onRequestCurrentAmplitude = {
             recorder?.maxAmplitude ?: 0
         }
+        resetButton.setOnClickListener {
+            stopPlaying()
+            soundVisualizerView.clearVisualization()
+            recordTimeTextView.clearCountTime()
+            state = State.BEFORE_RECORDING
+        }
         recordButton.setOnClickListener {
             when (state) {
                 State.BEFORE_RECORDING -> {
@@ -142,10 +152,6 @@ class MainActivity : AppCompatActivity() {
                     stopPlaying()
                 }
             }
-        }
-        resetButton.setOnClickListener {
-            stopPlaying()
-            state = State.BEFORE_RECORDING
         }
     }
 
